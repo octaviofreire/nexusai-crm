@@ -23,9 +23,7 @@ export const Route = createFileRoute("/_authenticated/deals")({
 
 const brl = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
 
-type Deal = Awaited<ReturnType<Awaited<ReturnType<typeof listDeals>>>>[number] extends never
-  ? never
-  : { id: string; title: string; amount: number; currency: string; probability: number; status: string; stage_id: string; contacts?: { first_name: string; last_name?: string } | null; accounts?: { name?: string } | null };
+type Deal = { id: string; title: string; amount: number; currency: string; probability: number; status: string; stage_id: string; contacts?: { first_name: string; last_name?: string | null } | null; accounts?: { name?: string | null } | null };
 
 function DealsPage() {
   const qc = useQueryClient();
