@@ -9,38 +9,194 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiCopilotRouteImport } from './routes/api/copilot'
+import { Route as AuthenticatedTasksRouteImport } from './routes/_authenticated/tasks'
+import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
+import { Route as AuthenticatedDealsRouteImport } from './routes/_authenticated/deals'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedContactsRouteImport } from './routes/_authenticated/contacts'
+import { Route as AuthenticatedAccountsRouteImport } from './routes/_authenticated/accounts'
+import { Route as AuthenticatedContactsIdRouteImport } from './routes/_authenticated/contacts.$id'
 
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCopilotRoute = ApiCopilotRouteImport.update({
+  id: '/api/copilot',
+  path: '/api/copilot',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedTasksRoute = AuthenticatedTasksRouteImport.update({
+  id: '/tasks',
+  path: '/tasks',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedDealsRoute = AuthenticatedDealsRouteImport.update({
+  id: '/deals',
+  path: '/deals',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedContactsRoute = AuthenticatedContactsRouteImport.update({
+  id: '/contacts',
+  path: '/contacts',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAccountsRoute = AuthenticatedAccountsRouteImport.update({
+  id: '/accounts',
+  path: '/accounts',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedContactsIdRoute = AuthenticatedContactsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AuthenticatedContactsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/accounts': typeof AuthenticatedAccountsRoute
+  '/contacts': typeof AuthenticatedContactsRouteWithChildren
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/deals': typeof AuthenticatedDealsRoute
+  '/settings': typeof AuthenticatedSettingsRoute
+  '/tasks': typeof AuthenticatedTasksRoute
+  '/api/copilot': typeof ApiCopilotRoute
+  '/contacts/$id': typeof AuthenticatedContactsIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/accounts': typeof AuthenticatedAccountsRoute
+  '/contacts': typeof AuthenticatedContactsRouteWithChildren
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/deals': typeof AuthenticatedDealsRoute
+  '/settings': typeof AuthenticatedSettingsRoute
+  '/tasks': typeof AuthenticatedTasksRoute
+  '/api/copilot': typeof ApiCopilotRoute
+  '/contacts/$id': typeof AuthenticatedContactsIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/_authenticated/accounts': typeof AuthenticatedAccountsRoute
+  '/_authenticated/contacts': typeof AuthenticatedContactsRouteWithChildren
+  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/deals': typeof AuthenticatedDealsRoute
+  '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/_authenticated/tasks': typeof AuthenticatedTasksRoute
+  '/api/copilot': typeof ApiCopilotRoute
+  '/_authenticated/contacts/$id': typeof AuthenticatedContactsIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/sitemap.xml'
+    | '/accounts'
+    | '/contacts'
+    | '/dashboard'
+    | '/deals'
+    | '/settings'
+    | '/tasks'
+    | '/api/copilot'
+    | '/contacts/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/sitemap.xml'
+    | '/accounts'
+    | '/contacts'
+    | '/dashboard'
+    | '/deals'
+    | '/settings'
+    | '/tasks'
+    | '/api/copilot'
+    | '/contacts/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/sitemap.xml'
+    | '/_authenticated/accounts'
+    | '/_authenticated/contacts'
+    | '/_authenticated/dashboard'
+    | '/_authenticated/deals'
+    | '/_authenticated/settings'
+    | '/_authenticated/tasks'
+    | '/api/copilot'
+    | '/_authenticated/contacts/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  ApiCopilotRoute: typeof ApiCopilotRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +204,106 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/copilot': {
+      id: '/api/copilot'
+      path: '/api/copilot'
+      fullPath: '/api/copilot'
+      preLoaderRoute: typeof ApiCopilotRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/tasks': {
+      id: '/_authenticated/tasks'
+      path: '/tasks'
+      fullPath: '/tasks'
+      preLoaderRoute: typeof AuthenticatedTasksRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/settings': {
+      id: '/_authenticated/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/deals': {
+      id: '/_authenticated/deals'
+      path: '/deals'
+      fullPath: '/deals'
+      preLoaderRoute: typeof AuthenticatedDealsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/contacts': {
+      id: '/_authenticated/contacts'
+      path: '/contacts'
+      fullPath: '/contacts'
+      preLoaderRoute: typeof AuthenticatedContactsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/accounts': {
+      id: '/_authenticated/accounts'
+      path: '/accounts'
+      fullPath: '/accounts'
+      preLoaderRoute: typeof AuthenticatedAccountsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/contacts/$id': {
+      id: '/_authenticated/contacts/$id'
+      path: '/$id'
+      fullPath: '/contacts/$id'
+      preLoaderRoute: typeof AuthenticatedContactsIdRouteImport
+      parentRoute: typeof AuthenticatedContactsRoute
+    }
   }
 }
 
+interface AuthenticatedContactsRouteChildren {
+  AuthenticatedContactsIdRoute: typeof AuthenticatedContactsIdRoute
+}
+
+const AuthenticatedContactsRouteChildren: AuthenticatedContactsRouteChildren = {
+  AuthenticatedContactsIdRoute: AuthenticatedContactsIdRoute,
+}
+
+const AuthenticatedContactsRouteWithChildren =
+  AuthenticatedContactsRoute._addFileChildren(
+    AuthenticatedContactsRouteChildren,
+  )
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAccountsRoute: typeof AuthenticatedAccountsRoute
+  AuthenticatedContactsRoute: typeof AuthenticatedContactsRouteWithChildren
+  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedDealsRoute: typeof AuthenticatedDealsRoute
+  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+  AuthenticatedTasksRoute: typeof AuthenticatedTasksRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAccountsRoute: AuthenticatedAccountsRoute,
+  AuthenticatedContactsRoute: AuthenticatedContactsRouteWithChildren,
+  AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedDealsRoute: AuthenticatedDealsRoute,
+  AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
+  AuthenticatedTasksRoute: AuthenticatedTasksRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
+  ApiCopilotRoute: ApiCopilotRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
