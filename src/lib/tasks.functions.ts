@@ -25,9 +25,10 @@ export const createTask = createServerFn({ method: "POST" })
     related_deal_id: z.string().uuid().optional().nullable(),
   }).parse(d))
   .handler(async ({ context, data }) => {
+    const { orgId, assignee_id, ...rest } = data;
     const { data: row, error } = await context.supabase.from("tasks").insert({
-      ...data, org_id: data.orgId, created_by: context.userId,
-      assignee_id: data.assignee_id ?? context.userId,
+      ...rest, org_id: orgId, created_by: context.userId,
+      assignee_id: assignee_id ?? context.userId,
     }).select().single();
     if (error) throw new Error(error.message);
     return row;

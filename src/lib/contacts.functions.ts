@@ -33,9 +33,10 @@ export const createContact = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => CreateContactInput.parse(d))
   .handler(async ({ context, data }) => {
+    const { orgId, email, ...rest } = data;
     const { data: row, error } = await context.supabase
       .from("contacts")
-      .insert({ ...data, org_id: data.orgId, owner_id: context.userId, email: data.email || null })
+      .insert({ ...rest, org_id: orgId, owner_id: context.userId, email: email || null })
       .select().single();
     if (error) throw new Error(error.message);
     return row;
@@ -93,8 +94,9 @@ export const createAccount = createServerFn({ method: "POST" })
     size: z.string().optional().nullable(),
   }).parse(d))
   .handler(async ({ context, data }) => {
+    const { orgId, ...rest } = data;
     const { data: row, error } = await context.supabase.from("accounts").insert({
-      ...data, org_id: data.orgId, owner_id: context.userId,
+      ...rest, org_id: orgId, owner_id: context.userId,
     }).select().single();
     if (error) throw new Error(error.message);
     return row;

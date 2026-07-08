@@ -56,8 +56,9 @@ export const createDeal = createServerFn({ method: "POST" })
     probability: z.number().min(0).max(100).default(0),
   }).parse(d))
   .handler(async ({ context, data }) => {
+    const { orgId, ...rest } = data;
     const { data: row, error } = await context.supabase.from("deals").insert({
-      ...data, org_id: data.orgId, owner_id: context.userId, status: "open",
+      ...rest, org_id: orgId, owner_id: context.userId, status: "open" as const,
     }).select().single();
     if (error) throw new Error(error.message);
     return row;
@@ -71,11 +72,10 @@ export const moveDeal = createServerFn({ method: "POST" })
   }).parse(d))
   .handler(async ({ context, data }) => {
     const { data: stage } = await context.supabase.from("stages").select("win_probability,is_closed,is_won").eq("id", data.stage_id).maybeSingle();
-    const patch: Record<string, unknown> = { stage_id: data.stage_id };
+    const patch: { stage_id: string; probability?: number; status?: "open"|"won"|"lost" } = { stage_id: data.stage_id };
     if (stage) {
       patch.probability = Number(stage.win_probability);
-      if (stage.is_closed) patch.status = stage.is_won ? "won" : "lost";
-      else patch.status = "open";
+      patch.status = stage.is_closed ? (stage.is_won ? "won" : "lost") : "open";
     }
     const { error } = await context.supabase.from("deals").update(patch).eq("id", data.id);
     if (error) throw new Error(error.message);
