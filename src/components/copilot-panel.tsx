@@ -20,7 +20,7 @@ export function CopilotPanel({ open, onOpenChange }: { open: boolean; onOpenChan
   const transport = useMemo(
     () => new DefaultChatTransport({
       api: "/api/copilot",
-      headers: () => (token ? { Authorization: `Bearer ${token}` } : {}),
+      headers: (): Record<string, string> => (token ? { Authorization: `Bearer ${token}` } : {}),
     }),
     [token],
   );
