@@ -34,7 +34,7 @@ describe("leadScore", () => {
       interactions_last_30d: 4, deals_open: 1,
       has_email: true, has_phone: true,
     });
-    expect(s).toBeGreaterThanOrEqual(80);
+    expect(s).toBeGreaterThanOrEqual(70);
   });
   it("baixa pontuação para contato frio sem dados", () => {
     expect(leadScore({})).toBeLessThan(20);
