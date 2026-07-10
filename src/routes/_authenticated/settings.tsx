@@ -11,8 +11,10 @@ export const Route = createFileRoute("/_authenticated/settings")({
 });
 
 function SettingsPage() {
-  const profile = useSuspenseQuery({ queryKey: ["profile"], queryFn: () => useServerFn(getMyProfile)() });
-  const orgs = useSuspenseQuery({ queryKey: ["my-orgs"], queryFn: () => useServerFn(listMyOrgs)() });
+  const getProfile = useServerFn(getMyProfile);
+  const getOrgs = useServerFn(listMyOrgs);
+  const profile = useSuspenseQuery({ queryKey: ["profile"], queryFn: () => getProfile() });
+  const orgs = useSuspenseQuery({ queryKey: ["my-orgs"], queryFn: () => getOrgs() });
 
   return (
     <div className="p-6 space-y-4 max-w-2xl">

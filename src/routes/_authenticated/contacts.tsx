@@ -22,17 +22,20 @@ export const Route = createFileRoute("/_authenticated/contacts")({
 });
 
 function ContactsPage() {
-  const orgQ = useSuspenseQuery({ queryKey: ["orgId"], queryFn: () => useServerFn(getActiveOrgId)() });
+  const getOrg = useServerFn(getActiveOrgId);
+  const listContactsFn = useServerFn(listContacts);
+  const listAccountsFn = useServerFn(listAccounts);
+  const orgQ = useSuspenseQuery({ queryKey: ["orgId"], queryFn: () => getOrg() });
   const orgId = orgQ.data as string | null;
   const [q, setQ] = useState("");
 
   const contactsQ = useQuery({
     queryKey: ["contacts", orgId], enabled: !!orgId,
-    queryFn: () => useServerFn(listContacts)({ data: { orgId: orgId! } }),
+    queryFn: () => listContactsFn({ data: { orgId: orgId! } }),
   });
   const accountsQ = useQuery({
     queryKey: ["accounts", orgId], enabled: !!orgId,
-    queryFn: () => useServerFn(listAccounts)({ data: { orgId: orgId! } }),
+    queryFn: () => listAccountsFn({ data: { orgId: orgId! } }),
   });
 
   if (!orgId) return null;
@@ -110,6 +113,7 @@ function StatusBadge({ status }: { status: string }) {
 function NewContactDialog({ orgId, accounts }: { orgId: string; accounts: Array<{ id: string; name: string }> }) {
   const [open, setOpen] = useState(false);
   const qc = useQueryClient();
+  const createContactFn = useServerFn(createContact);
   const [first, setFirst] = useState("");
   const [last, setLast] = useState("");
   const [email, setEmail] = useState("");
@@ -117,7 +121,7 @@ function NewContactDialog({ orgId, accounts }: { orgId: string; accounts: Array<
   const [accountId, setAccountId] = useState<string>("");
   const mut = useMutation({
     mutationFn: (v: { first_name: string; last_name?: string; email?: string; title?: string; account_id?: string }) =>
-      useServerFn(createContact)({ data: { orgId, ...v, account_id: v.account_id || null, email: v.email || null } }),
+      createContactFn({ data: { orgId, ...v, account_id: v.account_id || null, email: v.email || null } }),
     onSuccess: () => {
       toast.success("Contato criado");
       qc.invalidateQueries({ queryKey: ["contacts", orgId] });

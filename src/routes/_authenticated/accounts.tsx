@@ -18,11 +18,13 @@ export const Route = createFileRoute("/_authenticated/accounts")({
 });
 
 function AccountsPage() {
-  const orgQ = useSuspenseQuery({ queryKey: ["orgId"], queryFn: () => useServerFn(getActiveOrgId)() });
+  const getOrg = useServerFn(getActiveOrgId);
+  const listAccountsFn = useServerFn(listAccounts);
+  const orgQ = useSuspenseQuery({ queryKey: ["orgId"], queryFn: () => getOrg() });
   const orgId = orgQ.data as string | null;
   const list = useQuery({
     queryKey: ["accounts", orgId], enabled: !!orgId,
-    queryFn: () => useServerFn(listAccounts)({ data: { orgId: orgId! } }),
+    queryFn: () => listAccountsFn({ data: { orgId: orgId! } }),
   });
   if (!orgId) return null;
 
@@ -51,13 +53,14 @@ function AccountsPage() {
 
 function NewAccount({ orgId }: { orgId: string }) {
   const qc = useQueryClient();
+  const createAccountFn = useServerFn(createAccount);
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [industry, setIndustry] = useState("");
   const [size, setSize] = useState("");
   const [website, setWebsite] = useState("");
   const mut = useMutation({
-    mutationFn: () => useServerFn(createAccount)({ data: { orgId, name, industry, size, website } }),
+    mutationFn: () => createAccountFn({ data: { orgId, name, industry, size, website } }),
     onSuccess: () => {
       toast.success("Conta criada");
       qc.invalidateQueries({ queryKey: ["accounts", orgId] });

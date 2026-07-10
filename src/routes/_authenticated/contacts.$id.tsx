@@ -20,13 +20,16 @@ export const Route = createFileRoute("/_authenticated/contacts/$id")({
 function ContactDetail() {
   const { id } = Route.useParams();
   const qc = useQueryClient();
-  const orgQ = useQuery({ queryKey: ["orgId"], queryFn: () => useServerFn(getActiveOrgId)() });
-  const q = useQuery({ queryKey: ["contact", id], queryFn: () => useServerFn(getContact)({ data: { id } }) });
+  const getOrg = useServerFn(getActiveOrgId);
+  const getContactFn = useServerFn(getContact);
+  const addInteractionFn = useServerFn(addInteraction);
+  const orgQ = useQuery({ queryKey: ["orgId"], queryFn: () => getOrg() });
+  const q = useQuery({ queryKey: ["contact", id], queryFn: () => getContactFn({ data: { id } }) });
   const [note, setNote] = useState("");
   const orgId = orgQ.data as string | null;
 
   const addM = useMutation({
-    mutationFn: () => useServerFn(addInteraction)({ data: { orgId: orgId!, contact_id: id, type: "note", body: note } }),
+    mutationFn: () => addInteractionFn({ data: { orgId: orgId!, contact_id: id, type: "note", body: note } }),
     onSuccess: () => {
       toast.success("Nota adicionada");
       setNote("");

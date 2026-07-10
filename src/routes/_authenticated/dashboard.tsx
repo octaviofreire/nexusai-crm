@@ -19,20 +19,23 @@ const brl = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" 
 
 function DashboardPage() {
   const getOrg = useServerFn(getActiveOrgId);
+  const listDealsFn = useServerFn(listDeals);
+  const dealsForecastFn = useServerFn(dealsForecast);
+  const listTasksFn = useServerFn(listTasks);
   const orgQ = useSuspenseQuery({ queryKey: ["orgId"], queryFn: () => getOrg() });
   const orgId = orgQ.data as string | null;
 
   const dealsQ = useQuery({
     queryKey: ["deals", orgId], enabled: !!orgId,
-    queryFn: () => useServerFn(listDeals)({ data: { orgId: orgId! } }),
+    queryFn: () => listDealsFn({ data: { orgId: orgId! } }),
   });
   const forecastQ = useQuery({
     queryKey: ["forecast", orgId], enabled: !!orgId,
-    queryFn: () => useServerFn(dealsForecast)({ data: { orgId: orgId! } }),
+    queryFn: () => dealsForecastFn({ data: { orgId: orgId! } }),
   });
   const tasksQ = useQuery({
     queryKey: ["tasks-mine", orgId], enabled: !!orgId,
-    queryFn: () => useServerFn(listTasks)({ data: { orgId: orgId!, onlyMine: true } }),
+    queryFn: () => listTasksFn({ data: { orgId: orgId!, onlyMine: true } }),
   });
 
   if (!orgId) {
