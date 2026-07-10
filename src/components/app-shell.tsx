@@ -1,5 +1,5 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { LayoutDashboard, Users, Building2, KanbanSquare, CheckSquare, Settings, LogOut, Sparkles } from "lucide-react";
+import { LayoutDashboard, Users, Building2, KanbanSquare, CheckSquare, Settings, LogOut, Sparkles, BarChart3 } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 const nav = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/deals", label: "Vendas", icon: KanbanSquare },
+  { to: "/reports", label: "Relatórios", icon: BarChart3 },
   { to: "/contacts", label: "Contatos", icon: Users },
   { to: "/accounts", label: "Contas", icon: Building2 },
   { to: "/tasks", label: "Tarefas", icon: CheckSquare },
