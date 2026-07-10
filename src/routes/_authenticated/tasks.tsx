@@ -22,14 +22,17 @@ export const Route = createFileRoute("/_authenticated/tasks")({
 
 function TasksPage() {
   const qc = useQueryClient();
-  const orgQ = useSuspenseQuery({ queryKey: ["orgId"], queryFn: () => useServerFn(getActiveOrgId)() });
+  const getOrg = useServerFn(getActiveOrgId);
+  const listTasksFn = useServerFn(listTasks);
+  const toggleTaskFn = useServerFn(toggleTask);
+  const orgQ = useSuspenseQuery({ queryKey: ["orgId"], queryFn: () => getOrg() });
   const orgId = orgQ.data as string | null;
   const list = useQuery({
     queryKey: ["tasks", orgId], enabled: !!orgId,
-    queryFn: () => useServerFn(listTasks)({ data: { orgId: orgId! } }),
+    queryFn: () => listTasksFn({ data: { orgId: orgId! } }),
   });
   const toggle = useMutation({
-    mutationFn: (v: { id: string; done: boolean }) => useServerFn(toggleTask)({ data: v }),
+    mutationFn: (v: { id: string; done: boolean }) => toggleTaskFn({ data: v }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["tasks", orgId] }),
   });
   if (!orgId) return null;
@@ -64,12 +67,13 @@ function TasksPage() {
 
 function NewTask({ orgId }: { orgId: string }) {
   const qc = useQueryClient();
+  const createTaskFn = useServerFn(createTask);
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [dueDate, setDueDate] = useState("");
   const mut = useMutation({
-    mutationFn: () => useServerFn(createTask)({ data: { orgId, title, description, due_date: dueDate || null } }),
+    mutationFn: () => createTaskFn({ data: { orgId, title, description, due_date: dueDate || null } }),
     onSuccess: () => {
       toast.success("Tarefa criada");
       qc.invalidateQueries({ queryKey: ["tasks", orgId] });

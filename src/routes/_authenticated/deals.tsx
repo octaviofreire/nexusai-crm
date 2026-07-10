@@ -27,13 +27,18 @@ type Deal = { id: string; title: string; amount: number; currency: string; proba
 
 function DealsPage() {
   const qc = useQueryClient();
-  const orgQ = useSuspenseQuery({ queryKey: ["orgId"], queryFn: () => useServerFn(getActiveOrgId)() });
+  const getOrg = useServerFn(getActiveOrgId);
+  const listPipelinesFn = useServerFn(listPipelines);
+  const listDealsFn = useServerFn(listDeals);
+  const listContactsFn = useServerFn(listContacts);
+  const moveDealFn = useServerFn(moveDeal);
+  const orgQ = useSuspenseQuery({ queryKey: ["orgId"], queryFn: () => getOrg() });
   const orgId = orgQ.data as string | null;
-  const pipesQ = useQuery({ queryKey: ["pipelines", orgId], enabled: !!orgId, queryFn: () => useServerFn(listPipelines)({ data: { orgId: orgId! } }) });
-  const dealsQ = useQuery({ queryKey: ["deals", orgId], enabled: !!orgId, queryFn: () => useServerFn(listDeals)({ data: { orgId: orgId! } }) });
-  const contactsQ = useQuery({ queryKey: ["contacts", orgId], enabled: !!orgId, queryFn: () => useServerFn(listContacts)({ data: { orgId: orgId! } }) });
+  const pipesQ = useQuery({ queryKey: ["pipelines", orgId], enabled: !!orgId, queryFn: () => listPipelinesFn({ data: { orgId: orgId! } }) });
+  const dealsQ = useQuery({ queryKey: ["deals", orgId], enabled: !!orgId, queryFn: () => listDealsFn({ data: { orgId: orgId! } }) });
+  const contactsQ = useQuery({ queryKey: ["contacts", orgId], enabled: !!orgId, queryFn: () => listContactsFn({ data: { orgId: orgId! } }) });
   const move = useMutation({
-    mutationFn: (v: { id: string; stage_id: string }) => useServerFn(moveDeal)({ data: v }),
+    mutationFn: (v: { id: string; stage_id: string }) => moveDealFn({ data: v }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["deals", orgId] }),
     onError: (e: Error) => toast.error(e.message),
   });
@@ -120,13 +125,14 @@ function NewDeal({ orgId, pipelineId, stages, contacts }: {
   contacts: Array<{ id: string; first_name: string; last_name?: string | null }>;
 }) {
   const qc = useQueryClient();
+  const createDealFn = useServerFn(createDeal);
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("0");
   const [stageId, setStageId] = useState(stages[0]?.id ?? "");
   const [contactId, setContactId] = useState<string>("");
   const mut = useMutation({
-    mutationFn: () => useServerFn(createDeal)({ data: { orgId, pipeline_id: pipelineId, stage_id: stageId, title, amount: Number(amount) || 0, currency: "BRL", contact_id: contactId || null } }),
+    mutationFn: () => createDealFn({ data: { orgId, pipeline_id: pipelineId, stage_id: stageId, title, amount: Number(amount) || 0, currency: "BRL", contact_id: contactId || null } }),
     onSuccess: () => {
       toast.success("Negócio criado");
       qc.invalidateQueries({ queryKey: ["deals", orgId] });

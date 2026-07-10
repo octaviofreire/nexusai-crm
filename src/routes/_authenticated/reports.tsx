@@ -58,13 +58,16 @@ type DealRow = {
 };
 
 function ReportsPage() {
-  const orgQ = useSuspenseQuery({ queryKey: ["orgId"], queryFn: () => useServerFn(getActiveOrgId)() });
+  const getOrg = useServerFn(getActiveOrgId);
+  const getProfile = useServerFn(getMyProfile);
+  const listDealsFn = useServerFn(listDeals);
+  const orgQ = useSuspenseQuery({ queryKey: ["orgId"], queryFn: () => getOrg() });
   const orgId = orgQ.data as string | null;
-  const profileQ = useQuery({ queryKey: ["profile"], queryFn: () => useServerFn(getMyProfile)() });
+  const profileQ = useQuery({ queryKey: ["profile"], queryFn: () => getProfile() });
   const dealsQ = useQuery({
     queryKey: ["deals", orgId],
     enabled: !!orgId,
-    queryFn: () => useServerFn(listDeals)({ data: { orgId: orgId! } }),
+    queryFn: () => listDealsFn({ data: { orgId: orgId! } }),
   });
 
   const [period, setPeriod] = useState<Period>("30d");
