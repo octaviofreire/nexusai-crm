@@ -42,7 +42,9 @@ function AccountsPage() {
           <Card key={a.id}><CardContent className="pt-6">
             <div className="font-medium">{a.name}</div>
             <div className="text-xs text-muted-foreground">{a.industry ?? "—"} · {a.size ?? "—"}</div>
-            {a.website && <a href={a.website} target="_blank" className="text-xs text-accent hover:underline">{a.website}</a>}
+            {a.website && /^https?:\/\//i.test(a.website) && (
+              <a href={a.website} target="_blank" rel="noopener noreferrer nofollow" className="text-xs text-accent hover:underline">{a.website}</a>
+            )}
           </CardContent></Card>
         ))}
         {(list.data ?? []).length === 0 && <p className="text-sm text-muted-foreground">Nenhuma conta cadastrada.</p>}
