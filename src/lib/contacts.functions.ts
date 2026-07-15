@@ -88,15 +88,18 @@ export const createAccount = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({
     orgId: z.string().uuid(),
-    name: z.string().min(1),
-    website: z.string().optional().nullable(),
-    industry: z.string().optional().nullable(),
-    size: z.string().optional().nullable(),
+    name: z.string().min(1).max(200),
+    website: z.string().trim().max(500).optional().nullable().refine(
+      (v) => !v || /^https?:\/\/[^\s]+$/i.test(v),
+      { message: "Website deve começar com http:// ou https://" },
+    ),
+    industry: z.string().max(100).optional().nullable(),
+    size: z.string().max(50).optional().nullable(),
   }).parse(d))
   .handler(async ({ context, data }) => {
-    const { orgId, ...rest } = data;
+    const { orgId, website, ...rest } = data;
     const { data: row, error } = await context.supabase.from("accounts").insert({
-      ...rest, org_id: orgId, owner_id: context.userId,
+      ...rest, org_id: orgId, owner_id: context.userId, website: website || null,
     }).select().single();
     if (error) throw new Error(error.message);
     return row;
