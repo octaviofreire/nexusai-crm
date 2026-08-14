@@ -13,7 +13,7 @@ export default defineTool({
   annotations: { readOnlyHint: true, openWorldHint: false },
   handler: async ({ status, limit }, ctx) => {
     const res = await requireUserOrg(ctx);
-    if ("error" in res) return toolError(res.error);
+    if (res.error) return toolError(res.error);
     let q = res.sb
       .from("deals")
       .select("id,title,amount,currency,probability,status,expected_close_date,stages(name),contacts(first_name,last_name),accounts(name)")

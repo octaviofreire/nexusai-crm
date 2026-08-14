@@ -14,7 +14,7 @@ export default defineTool({
   annotations: { readOnlyHint: true, openWorldHint: false },
   handler: async ({ only_mine, only_open, limit }, ctx) => {
     const res = await requireUserOrg(ctx);
-    if ("error" in res) return toolError(res.error);
+    if (res.error) return toolError(res.error);
     let q = res.sb
       .from("tasks")
       .select("id,title,description,due_date,done,assignee_id,related_contact_id,related_deal_id")

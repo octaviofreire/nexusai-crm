@@ -16,7 +16,7 @@ export default defineTool({
   annotations: { readOnlyHint: false, destructiveHint: false, openWorldHint: false },
   handler: async (args, ctx) => {
     const res = await requireUserOrg(ctx);
-    if ("error" in res) return toolError(res.error);
+    if (res.error) return toolError(res.error);
     const { data, error } = await res.sb
       .from("tasks")
       .insert({
