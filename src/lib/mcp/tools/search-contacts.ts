@@ -13,7 +13,7 @@ export default defineTool({
   annotations: { readOnlyHint: true, openWorldHint: false },
   handler: async ({ query, limit }, ctx) => {
     const res = await requireUserOrg(ctx);
-    if (res.error) return toolError(res.error);
+    if (!res.ok) return toolError(res.error);
     let q = res.sb
       .from("contacts")
       .select("id,first_name,last_name,email,phone,title,status,lead_score,accounts(name)")

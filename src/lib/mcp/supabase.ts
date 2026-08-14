@@ -70,18 +70,18 @@ export async function activeOrgId(sb: UserClient, uid: string): Promise<string |
 }
 
 type UserOrg =
-  | { error: string; sb?: undefined; uid?: undefined; orgId?: undefined }
-  | { error?: undefined; sb: UserClient; uid: string; orgId: string };
+  | { ok: false; error: string }
+  | { ok: true; sb: UserClient; uid: string; orgId: string };
 
 /** Resolve cliente + org, ou devolve um erro de ferramenta pronto para retorno. */
 export async function requireUserOrg(ctx: ToolContext): Promise<UserOrg> {
-  if (!ctx.isAuthenticated()) return { error: "Não autenticado." };
+  if (!ctx.isAuthenticated()) return { ok: false, error: "Não autenticado." };
   const sb = supabaseForUser(ctx);
   const uid = ctx.getUserId();
-  if (!uid) return { error: "Token sem identificação de usuário." };
+  if (!uid) return { ok: false, error: "Token sem identificação de usuário." };
   const orgId = await activeOrgId(sb, uid);
-  if (!orgId) return { error: "Usuário sem organização ativa no Nexus CRM." };
-  return { sb, uid, orgId };
+  if (!orgId) return { ok: false, error: "Usuário sem organização ativa no Nexus CRM." };
+  return { ok: true, sb, uid, orgId };
 }
 
 export function toolError(text: string) {
