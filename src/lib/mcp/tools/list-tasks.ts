@@ -17,12 +17,12 @@ export default defineTool({
     if ("error" in res) return toolError(res.error);
     let q = res.sb
       .from("tasks")
-      .select("id,title,description,due_date,status,assignee_id,related_contact_id,related_deal_id")
+      .select("id,title,description,due_date,done,assignee_id,related_contact_id,related_deal_id")
       .eq("org_id", res.orgId)
       .order("due_date", { ascending: true })
       .limit(limit ?? 20);
     if (only_mine) q = q.eq("assignee_id", res.uid);
-    if (only_open !== false) q = q.neq("status", "done");
+    if (only_open !== false) q = q.eq("done", false);
     const { data, error } = await q;
     if (error) return toolError(error.message);
     return toolJson({ tasks: data ?? [] });
