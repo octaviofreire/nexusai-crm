@@ -75,6 +75,16 @@ export function CopilotPanel({ open, onOpenChange }: { open: boolean; onOpenChan
                       ? <span key={i}>{p.text}</span>
                       : <div key={i} className="prose prose-sm max-w-none dark:prose-invert"><ReactMarkdown>{p.text}</ReactMarkdown></div>;
                   }
+                  if (p.type === "reasoning") {
+                    const rp = p as { text?: string; state?: string };
+                    if (!rp.text) return null;
+                    return (
+                      <details key={i} className="text-xs border rounded px-2 py-1 bg-background/60 text-muted-foreground">
+                        <summary className="cursor-pointer flex items-center gap-2"><Sparkles className="h-3 w-3" /> Raciocínio</summary>
+                        <div className="mt-1 whitespace-pre-wrap">{rp.text}</div>
+                      </details>
+                    );
+                  }
                   if (typeof p.type === "string" && p.type.startsWith("tool-")) {
                     const tp = p as { type: string; state?: string; output?: unknown; input?: unknown };
                     const name = tp.type.replace(/^tool-/, "");

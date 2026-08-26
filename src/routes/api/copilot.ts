@@ -41,7 +41,7 @@ export const Route = createFileRoute("/api/copilot")({
         if (!orgId) return new Response("Sem organização ativa", { status: 400 });
 
         const gateway = createLovableAiGatewayProvider(apiKey);
-        const model = gateway("google/gemini-3-flash-preview");
+        const model = gateway("google/gemini-3.7-flash");
 
         const tools = {
           get_contact: tool({
@@ -112,9 +112,10 @@ export const Route = createFileRoute("/api/copilot")({
           messages: await convertToModelMessages(messages),
           tools,
           stopWhen: stepCountIs(50),
+          providerOptions: { lovable: { reasoning: { effort: "low" } } },
         });
 
-        return result.toUIMessageStreamResponse({ originalMessages: messages });
+        return result.toUIMessageStreamResponse({ originalMessages: messages, sendReasoning: true });
       },
     },
   },
