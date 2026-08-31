@@ -196,19 +196,19 @@ function ReportsPage() {
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>
-          <CardHeader><CardTitle className="text-base">Ganhos x Perdidos por mês</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-base font-display">Ganhos x Perdidos por mês</CardTitle></CardHeader>
           <CardContent className="h-72">
             {monthly.length === 0 ? (
               <EmptyChart />
             ) : (
               <ResponsiveContainer>
                 <BarChart data={monthly}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
-                  <XAxis dataKey="key" fontSize={12} />
-                  <YAxis fontSize={12} allowDecimals={false} />
-                  <Tooltip />
-                  <Bar dataKey="won" name="Ganhos" fill="oklch(0.60 0.15 155)" radius={[6, 6, 0, 0]} />
-                  <Bar dataKey="lost" name="Perdidos" fill="oklch(0.58 0.22 25)" radius={[6, 6, 0, 0]} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
+                  <XAxis dataKey="key" fontSize={12} stroke="var(--color-muted-foreground)" tickLine={false} axisLine={false} />
+                  <YAxis fontSize={12} allowDecimals={false} stroke="var(--color-muted-foreground)" tickLine={false} axisLine={false} />
+                  <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "var(--color-muted)" }} />
+                  <Bar dataKey="won" name="Ganhos" fill="var(--color-chart-1)" radius={[6, 6, 0, 0]} />
+                  <Bar dataKey="lost" name="Perdidos" fill="var(--color-destructive)" radius={[6, 6, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             )}
@@ -216,17 +216,17 @@ function ReportsPage() {
         </Card>
 
         <Card>
-          <CardHeader><CardTitle className="text-base">Receita ganha por mês</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-base font-display">Receita ganha por mês</CardTitle></CardHeader>
           <CardContent className="h-72">
             {monthly.length === 0 ? (
               <EmptyChart />
             ) : (
               <ResponsiveContainer>
                 <LineChart data={monthly}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
-                  <XAxis dataKey="key" fontSize={12} />
-                  <YAxis fontSize={12} tickFormatter={(v) => brl.format(v as number)} />
-                  <Tooltip formatter={(v) => brl.format(v as number)} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
+                  <XAxis dataKey="key" fontSize={12} stroke="var(--color-muted-foreground)" tickLine={false} axisLine={false} />
+                  <YAxis fontSize={12} stroke="var(--color-muted-foreground)" tickLine={false} axisLine={false} tickFormatter={(v) => brl.format(v as number)} />
+                  <Tooltip formatter={(v) => brl.format(v as number)} contentStyle={tooltipStyle} />
                   <Line type="monotone" dataKey="wonAmount" stroke="var(--color-chart-1)" strokeWidth={2} dot={false} name="Receita" />
                 </LineChart>
               </ResponsiveContainer>
