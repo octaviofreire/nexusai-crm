@@ -27,6 +27,14 @@ export const Route = createFileRoute("/_authenticated/reports")({
 
 const brl = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
 
+const tooltipStyle = {
+  backgroundColor: "var(--color-popover)",
+  border: "1px solid var(--color-border)",
+  borderRadius: "var(--radius)",
+  color: "var(--color-popover-foreground)",
+  fontSize: 12,
+} as const;
+
 type Period = "7d" | "30d" | "90d" | "ytd" | "all";
 const periodOptions: Array<{ value: Period; label: string }> = [
   { value: "7d", label: "Últimos 7 dias" },
@@ -282,10 +290,10 @@ function ReportsPage() {
 
 function Kpi({ label, value, hint }: { label: string; value: string; hint?: string }) {
   return (
-    <Card>
+    <Card className="card-glow">
       <CardContent className="pt-6">
-        <div className="text-xs uppercase tracking-wide text-muted-foreground">{label}</div>
-        <div className="mt-2 text-2xl font-display font-semibold">{value}</div>
+        <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground font-display">{label}</div>
+        <div className="mt-2 text-2xl font-mono font-bold tracking-tight">{value}</div>
         {hint && <div className="mt-1 text-xs text-muted-foreground">{hint}</div>}
       </CardContent>
     </Card>
