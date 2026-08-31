@@ -90,11 +90,11 @@ function DealsPage() {
 function StageColumn({ id, name, total, count, children }: { id: string; name: string; total: number; count: number; children: React.ReactNode }) {
   const { setNodeRef, isOver } = useDroppable({ id });
   return (
-    <div ref={setNodeRef} className={`w-72 shrink-0 rounded-lg border bg-muted/30 flex flex-col ${isOver ? "ring-2 ring-accent" : ""}`}>
-      <div className="p-3 border-b flex items-center justify-between">
+    <div ref={setNodeRef} className={`w-72 shrink-0 rounded-xl border border-border bg-muted/40 flex flex-col transition-shadow ${isOver ? "ring-2 ring-primary glow-primary" : ""}`}>
+      <div className="px-3 py-2.5 border-b border-border flex items-center justify-between">
         <div>
-          <div className="text-sm font-medium">{name}</div>
-          <div className="text-xs text-muted-foreground">{count} · {brl.format(total)}</div>
+          <div className="text-sm font-display font-semibold">{name}</div>
+          <div className="text-xs text-muted-foreground font-mono">{count} · {brl.format(total)}</div>
         </div>
       </div>
       <div className="p-2 space-y-2 flex-1 min-h-32">{children}</div>
