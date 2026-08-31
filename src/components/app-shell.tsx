@@ -32,12 +32,14 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-screen flex bg-background">
-      <aside className="w-64 shrink-0 bg-sidebar text-sidebar-foreground flex flex-col border-r border-sidebar-border">
-        <div className="p-5 flex items-center gap-2 font-display text-lg font-semibold">
-          <span className="grid h-8 w-8 place-items-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground">N</span>
-          Nexus
+      <aside className="w-60 shrink-0 bg-sidebar text-sidebar-foreground flex flex-col border-r border-sidebar-border">
+        <div className="p-6 flex items-center gap-3">
+          <span className="grid h-8 w-8 place-items-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground font-display font-bold glow-primary">
+            N
+          </span>
+          <span className="font-display text-lg font-bold tracking-tight text-foreground">Nexus</span>
         </div>
-        <nav className="flex-1 px-3 space-y-1">
+        <nav className="flex-1 px-4 space-y-1 mt-2">
           {nav.map((item) => {
             const Icon = item.icon;
             const active = pathname === item.to || pathname.startsWith(item.to + "/");
@@ -46,22 +48,22 @@ export function AppShell({ children }: { children: ReactNode }) {
                 key={item.to}
                 to={item.to}
                 className={cn(
-                  "flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors",
+                  "group flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
                   active
-                    ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
-                    : "text-sidebar-foreground/80 hover:bg-sidebar-accent/60",
+                    ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium border border-primary/20"
+                    : "border border-transparent hover:bg-muted/60 hover:text-foreground",
                 )}
               >
-                <Icon className="h-4 w-4" />
+                <Icon className={cn("h-4 w-4", active ? "text-sidebar-accent-foreground" : "group-hover:text-foreground")} />
                 {item.label}
               </Link>
             );
           })}
         </nav>
-        <div className="p-3 border-t border-sidebar-border">
+        <div className="p-4 border-t border-sidebar-border">
           <button
             onClick={signOut}
-            className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm text-sidebar-foreground/80 hover:bg-sidebar-accent/60"
+            className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-sidebar-foreground hover:bg-muted/60 hover:text-foreground transition-colors"
           >
             <LogOut className="h-4 w-4" /> Sair
           </button>
@@ -69,8 +71,8 @@ export function AppShell({ children }: { children: ReactNode }) {
       </aside>
 
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="h-14 border-b bg-card flex items-center justify-end px-4 gap-2">
-          <Button onClick={() => setCopilotOpen(true)} variant="default" size="sm">
+        <header className="h-14 border-b border-sidebar-border flex items-center justify-end px-6 gap-2">
+          <Button onClick={() => setCopilotOpen(true)} variant="default" size="sm" className="glow-primary">
             <Sparkles className="h-4 w-4 mr-2" /> Copilot
           </Button>
         </header>
