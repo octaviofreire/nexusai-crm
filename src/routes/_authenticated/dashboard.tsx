@@ -57,46 +57,60 @@ function DashboardPage() {
     }, {}),
   ).map(([name, value]) => ({ name, value }));
 
-  const pieColors = ["oklch(0.55 0.15 258)", "oklch(0.72 0.14 82)", "oklch(0.60 0.15 155)", "oklch(0.58 0.22 25)", "oklch(0.55 0.15 300)"];
+  const pieColors = [
+    "var(--color-chart-1)",
+    "var(--color-chart-2)",
+    "var(--color-chart-3)",
+    "var(--color-chart-4)",
+    "var(--color-chart-5)",
+  ];
+
+  const tooltipStyle = {
+    backgroundColor: "var(--color-popover)",
+    border: "1px solid var(--color-border)",
+    borderRadius: "var(--radius)",
+    color: "var(--color-popover-foreground)",
+    fontSize: 12,
+  } as const;
 
   return (
     <div className="p-6 space-y-6">
       <div>
-        <h1 className="text-2xl font-display font-semibold">Painel</h1>
+        <h1 className="text-2xl font-display font-bold tracking-tight">Painel</h1>
         <p className="text-sm text-muted-foreground">Visão geral do seu funil e das tarefas de hoje.</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-4">
-        <Kpi label="Pipeline aberto" value={brl.format(forecastQ.data?.total.pipeline ?? 0)} />
-        <Kpi label="Previsão ponderada" value={brl.format(forecastQ.data?.total.weighted ?? 0)} />
-        <Kpi label="Ganhos no mês" value={brl.format(wonThisMonth)} />
-        <Kpi label="Taxa de conversão" value={`${conversion.toFixed(1)}%`} />
+        <Kpi label="Pipeline aberto" value={brl.format(forecastQ.data?.total.pipeline ?? 0)} hint="Negócios em aberto" />
+        <Kpi label="Previsão ponderada" value={brl.format(forecastQ.data?.total.weighted ?? 0)} hint="Por probabilidade" />
+        <Kpi label="Ganhos no mês" value={brl.format(wonThisMonth)} hint="Fechados como ganhos" />
+        <Kpi label="Taxa de conversão" value={`${conversion.toFixed(1)}%`} hint={`${deals.length} negócios no total`} />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>
-          <CardHeader><CardTitle className="text-base">Pipeline por estágio</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-base font-display">Pipeline por estágio</CardTitle></CardHeader>
           <CardContent className="h-72">
             <ResponsiveContainer>
               <BarChart data={byStage}>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
-                <XAxis dataKey="name" fontSize={12} />
-                <YAxis fontSize={12} tickFormatter={(v) => brl.format(v as number)} />
-                <Tooltip formatter={(v) => brl.format(v as number)} />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
+                <XAxis dataKey="name" fontSize={12} stroke="var(--color-muted-foreground)" tickLine={false} axisLine={false} />
+                <YAxis fontSize={12} stroke="var(--color-muted-foreground)" tickLine={false} axisLine={false} tickFormatter={(v) => brl.format(v as number)} />
+                <Tooltip formatter={(v) => brl.format(v as number)} contentStyle={tooltipStyle} cursor={{ fill: "var(--color-muted)" }} />
                 <Bar dataKey="value" fill="var(--color-chart-1)" radius={[6,6,0,0]} />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
         <Card>
-          <CardHeader><CardTitle className="text-base">Distribuição de valor</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-base font-display">Distribuição de valor</CardTitle></CardHeader>
           <CardContent className="h-72">
             <ResponsiveContainer>
               <PieChart>
-                <Pie data={byStage} dataKey="value" nameKey="name" outerRadius={100}>
+                <Pie data={byStage} dataKey="value" nameKey="name" outerRadius={100} stroke="var(--color-card)" strokeWidth={2}>
                   {byStage.map((_, i) => <Cell key={i} fill={pieColors[i % pieColors.length]} />)}
                 </Pie>
-                <Tooltip formatter={(v) => brl.format(v as number)} />
+                <Tooltip formatter={(v) => brl.format(v as number)} contentStyle={tooltipStyle} />
               </PieChart>
             </ResponsiveContainer>
           </CardContent>
@@ -104,17 +118,20 @@ function DashboardPage() {
       </div>
 
       <Card>
-        <CardHeader><CardTitle className="text-base">Minhas tarefas pendentes</CardTitle></CardHeader>
+        <CardHeader><CardTitle className="text-base font-display">Minhas tarefas pendentes</CardTitle></CardHeader>
         <CardContent>
           {pending.length === 0 ? (
             <p className="text-sm text-muted-foreground">Sem tarefas pendentes. 🎉</p>
           ) : (
-            <ul className="space-y-2">
+            <ul className="space-y-1">
               {pending.slice(0, 6).map((t) => (
-                <li key={t.id} className="flex items-center justify-between border-b last:border-0 pb-2">
-                  <div>
-                    <div className="font-medium text-sm">{t.title}</div>
-                    {t.description && <div className="text-xs text-muted-foreground">{t.description}</div>}
+                <li key={t.id} className="flex items-center justify-between gap-4 rounded-lg px-3 py-2 hover:bg-muted/60 transition-colors">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="h-2 w-2 shrink-0 rounded-full bg-primary" />
+                    <div className="min-w-0">
+                      <div className="font-medium text-sm truncate">{t.title}</div>
+                      {t.description && <div className="text-xs text-muted-foreground truncate">{t.description}</div>}
+                    </div>
                   </div>
                   {t.due_date && (
                     <Badge variant="secondary">{format(new Date(t.due_date), "dd MMM", { locale: ptBR })}</Badge>
@@ -129,12 +146,13 @@ function DashboardPage() {
   );
 }
 
-function Kpi({ label, value }: { label: string; value: string }) {
+function Kpi({ label, value, hint }: { label: string; value: string; hint?: string }) {
   return (
-    <Card>
+    <Card className="card-glow">
       <CardContent className="pt-6">
-        <div className="text-xs uppercase tracking-wide text-muted-foreground">{label}</div>
-        <div className="mt-2 text-2xl font-display font-semibold">{value}</div>
+        <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground font-display">{label}</div>
+        <div className="mt-2 text-2xl font-mono font-bold tracking-tight">{value}</div>
+        {hint && <div className="mt-1 text-xs text-muted-foreground">{hint}</div>}
       </CardContent>
     </Card>
   );
